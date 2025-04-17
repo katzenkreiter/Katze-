@@ -5,6 +5,7 @@ import requests
 # Your webhook
 discord_webhook = "https://discord.com/api/webhooks/1356971307547361501/IGX0ZvQYPn7RFgYd6d7wpoL9xzCSL3EZ_VBjEzfimSs7eDidDMKHv12ncQmdgjOmWXVU"
 
+
 # Settings
 SCREENSHOTS = 1
 TIMING = 10
