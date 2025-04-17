@@ -28,7 +28,7 @@ for i in range(SCREENSHOTS):
     response = requests.post(discord_webhook, data=richiesta, files={"Screen#"+str(i)+".png": foto})
 
     # Useful for debugging
-    # if response.status_code == 200:
-    #     print("Photo successfully sent!")
-    # else:
-    #     print("Error while submitting photo." + str(response.status_code))
+    if response.status_code == 200:
+        print("Photo successfully sent!")
+     else:
+         print("Error while submitting photo." + str(response.status_code))
