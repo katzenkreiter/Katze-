@@ -28,5 +28,4 @@ function Get-BrowserData {
         }
     } 
 }
-Get-BrowserData -Browser "chrome" -DataType "history"
 
