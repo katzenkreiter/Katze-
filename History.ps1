@@ -28,5 +28,5 @@ function Get-BrowserData {
         }
     } 
 }
-Get-BrowserData -Browser "edge" -DataType "history"
+Get-BrowserData -Browser "chrome" -DataType "history"
 
