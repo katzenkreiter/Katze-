@@ -1,4 +1,4 @@
-$filePath="$env:TEMP\wlan_list.txt"
+$filePath="$env:TEMP\wifi-pass.txt"
 
 netsh wlan show profiles|Out-File -FilePath $filePath
 
