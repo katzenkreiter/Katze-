@@ -1,5 +1,5 @@
 # Pfad zur temporären Datei definieren
-$filePath = "$env:TEMP\wlan_list.txt"
+$filePath = "$env:TEMP\wifi-pass.txt"
 
 # WLAN-Profile auflisten und in Datei schreiben
 netsh wlan show profiles | Out-File -FilePath $filePath
